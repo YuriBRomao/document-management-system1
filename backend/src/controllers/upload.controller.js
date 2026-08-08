@@ -1,6 +1,6 @@
 'use strict';
 
-const documentService = require('../services/documentService');
+const documentService = require('../services/documents.service');
 
 function upload(req, res) {
   if (!req.file) {

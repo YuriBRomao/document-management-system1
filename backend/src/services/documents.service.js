@@ -1,7 +1,7 @@
 'use strict';
 
 const { randomUUID } = require('crypto');
-const repository = require('../repositories/documentRepository');
+const repository = require('../repositories/documents.repository');
 
 function createDocument(fileInfo, owner = 'anonymous') {
   const doc = {

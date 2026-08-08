@@ -1,7 +1,7 @@
 'use strict';
 
 const { Router } = require('express');
-const documentController = require('../controllers/documentController');
+const documentController = require('../controllers/documents.controller');
 
 const router = Router();
 router.get('/documents', documentController.list);

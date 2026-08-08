@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const documentService = require('../services/documentService');
+const documentService = require('../services/documents.service');
 
 const STORAGE_DIR = path.join(__dirname, '..', '..', 'storage');
 

@@ -11,8 +11,8 @@
 // usando multer com diskStorage. Não utilize provedores externos.
 
 const express = require('express');
-const uploadRoutes = require('./routes/uploadRoutes');
-const documentRoutes = require('./routes/documentRoutes');
+const uploadRoutes = require('./routes/upload.routes');
+const documentRoutes = require('./routes/documents.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;

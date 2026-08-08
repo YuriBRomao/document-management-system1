@@ -3,7 +3,7 @@
 const path = require('path');
 const multer = require('multer');
 const { Router } = require('express');
-const uploadController = require('../controllers/uploadController');
+const uploadController = require('../controllers/upload.controller');
 
 const STORAGE_DIR = path.join(__dirname, '..', '..', 'storage');
 
