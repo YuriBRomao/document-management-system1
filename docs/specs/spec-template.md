@@ -179,4 +179,4 @@ Liste as etapas na ordem de implementação (gerado no Passo 1).
 9. Padronizar respostas de erro e mensagens para cliente
 10. Implementar testes backend (node:test) para fluxos de sucesso e falhas principais
 11. Integrar frontend (UploadForm, DocumentList, DownloadButton) com API via /api
-12. Validar fluxo ponta a ponta (upload -> listagem -> download) e revisar regressões
+12. Validar fluxo ponta a ponta (upload -> listagem -> download) e revisar regressões.
