@@ -1,24 +1,26 @@
-const API_BASE = '/api';
+import { get, getBlob, post } from './apiClient';
 
 export async function uploadDocument(file, owner = 'anonymous') {
   const form = new FormData();
   form.append('file', file);
   form.append('owner', owner);
 
-  const res = await fetch(`${API_BASE}/upload`, { method: 'POST', body: form });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `Erro no upload: ${res.status}`);
-  }
-  return res.json();
+  return post('/upload', form);
 }
 
 export async function listDocuments() {
-  const res = await fetch(`${API_BASE}/documents`);
-  if (!res.ok) throw new Error(`Erro ao listar documentos: ${res.status}`);
-  return res.json();
+  return get('/documents');
 }
 
-export function getDownloadUrl(id) {
-  return `${API_BASE}/documents/${id}/download`;
+export async function downloadDocument(id, originalName) {
+  const blob = await getBlob(`/documents/${id}/download`);
+  const url = URL.createObjectURL(blob);
+
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = originalName;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
 }
