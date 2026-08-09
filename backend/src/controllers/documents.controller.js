@@ -9,7 +9,7 @@ function list(_req, res) {
   return res.json(documentService.listDocuments());
 }
 
-function download(req, res) {
+async function download(req, res, next) {
   let doc;
   try {
     doc = documentService.getDocumentById(req.params.id);
@@ -24,11 +24,15 @@ function download(req, res) {
     return res.status(400).json({ error: 'Caminho de arquivo inválido' });
   }
 
-  if (!fs.existsSync(filePath)) {
+  try {
+    await fs.promises.access(filePath);
+  } catch {
     return res.status(404).json({ error: 'Arquivo físico não encontrado' });
   }
 
-  res.download(filePath, doc.originalName);
+  res.download(filePath, doc.originalName, (err) => {
+    if (err) next(err);
+  });
 }
 
 module.exports = { list, download };
