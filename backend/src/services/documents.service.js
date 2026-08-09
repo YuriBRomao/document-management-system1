@@ -3,8 +3,13 @@
 const { randomUUID } = require('crypto');
 const repository = require('../repositories/documents.repository');
 
-function createDocument(fileInfo, owner = 'anonymous') {
-  const doc = {
+function normalizeOwner(ownerInput) {
+  const normalizedOwner = String(ownerInput ?? '').trim().slice(0, 100);
+  return normalizedOwner || 'anonymous';
+}
+
+function buildDocumentEntity(fileInfo, owner) {
+  return {
     id: randomUUID(),
     originalName: fileInfo.originalname,
     storedName: fileInfo.filename,
@@ -13,6 +18,21 @@ function createDocument(fileInfo, owner = 'anonymous') {
     uploadedAt: new Date().toISOString(),
     owner,
   };
+}
+
+function ensureDocumentExists(doc) {
+  if (doc) {
+    return doc;
+  }
+
+  const err = new Error('Documento não encontrado');
+  err.statusCode = 404;
+  throw err;
+}
+
+function createDocument(fileInfo, ownerInput) {
+  const owner = normalizeOwner(ownerInput);
+  const doc = buildDocumentEntity(fileInfo, owner);
   return repository.save(doc);
 }
 
@@ -21,13 +41,7 @@ function listDocuments() {
 }
 
 function getDocumentById(id) {
-  const doc = repository.findById(id);
-  if (!doc) {
-    const err = new Error('Documento não encontrado');
-    err.statusCode = 404;
-    throw err;
-  }
-  return doc;
+  return ensureDocumentExists(repository.findById(id));
 }
 
 module.exports = { createDocument, listDocuments, getDocumentById };
