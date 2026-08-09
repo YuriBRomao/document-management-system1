@@ -4,8 +4,7 @@ const path = require('path');
 const multer = require('multer');
 const { Router } = require('express');
 const uploadController = require('../controllers/upload.controller');
-
-const STORAGE_DIR = path.join(__dirname, '..', '..', 'storage');
+const { STORAGE_DIR } = require('../config');
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, STORAGE_DIR),
@@ -18,6 +17,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 const router = Router();
-router.post('/upload', upload.single('file'), uploadController.upload);
+
+router.post('/upload', (req, res, next) => {
+  upload.single('file')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ error: err.message });
+    }
+    if (err) return next(err);
+    next();
+  });
+}, uploadController.upload);
 
 module.exports = router;

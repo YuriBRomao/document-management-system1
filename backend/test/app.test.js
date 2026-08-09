@@ -7,6 +7,7 @@ const app = require('../src/app');
 
 let server;
 let baseUrl;
+let uploadedDoc;
 
 before(async () => {
   await new Promise((resolve) => {
@@ -59,9 +60,7 @@ test('POST /upload com arquivo retorna 201 e metadados', async () => {
   assert.strictEqual(doc.mimeType, 'text/plain');
   assert.ok(doc.uploadedAt);
 
-  // armazena id para os testes seguintes
-  process.env._TEST_DOC_ID = doc.id;
-  process.env._TEST_STORED = doc.storedName;
+  uploadedDoc = doc;
 });
 
 test('GET /documents retorna lista com ao menos um documento', async () => {
@@ -73,10 +72,9 @@ test('GET /documents retorna lista com ao menos um documento', async () => {
 });
 
 test('GET /documents/:id/download retorna conteúdo do arquivo', async () => {
-  const id = process.env._TEST_DOC_ID;
-  assert.ok(id, 'id deve ter sido definido pelo teste de upload');
+  assert.ok(uploadedDoc?.id, 'id deve ter sido definido pelo teste de upload');
 
-  const res = await fetch(`${baseUrl}/documents/${id}/download`);
+  const res = await fetch(`${baseUrl}/documents/${uploadedDoc.id}/download`);
   assert.strictEqual(res.status, 200);
   const text = await res.text();
   assert.ok(text.includes('conteúdo de teste'));
@@ -91,9 +89,8 @@ test('GET /documents/:id/download com id inválido retorna 404', async () => {
 
 after(async () => {
   // limpa arquivo de teste gravado em storage
-  const stored = process.env._TEST_STORED;
-  if (stored) {
-    const filePath = path.join(__dirname, '..', 'storage', stored);
+  if (uploadedDoc?.storedName) {
+    const filePath = path.join(__dirname, '..', 'storage', uploadedDoc.storedName);
     fs.rmSync(filePath, { force: true });
   }
 });

@@ -16,11 +16,14 @@ export async function downloadDocument(id, originalName) {
   const blob = await getBlob(`/documents/${id}/download`);
   const url = URL.createObjectURL(blob);
 
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = originalName;
-  document.body.appendChild(anchor);
-  anchor.click();
-  document.body.removeChild(anchor);
-  URL.revokeObjectURL(url);
+  try {
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = originalName;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }

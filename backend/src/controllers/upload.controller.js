@@ -7,7 +7,8 @@ function upload(req, res) {
     return res.status(400).json({ error: 'Nenhum arquivo enviado' });
   }
 
-  const owner = req.body.owner || req.query.owner || 'anonymous';
+  const rawOwner = req.body.owner || req.query.owner || 'anonymous';
+  const owner = String(rawOwner).trim().slice(0, 100) || 'anonymous';
   const doc = documentService.createDocument(req.file, owner);
   return res.status(201).json(doc);
 }

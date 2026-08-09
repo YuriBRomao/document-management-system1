@@ -13,9 +13,9 @@
 const express = require('express');
 const uploadRoutes = require('./routes/upload.routes');
 const documentRoutes = require('./routes/documents.routes');
+const { PORT } = require('./config');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(uploadRoutes);
@@ -23,6 +23,14 @@ app.use(documentRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
+});
+
+// Middleware de erro global — captura erros não tratados e evita vazar stack trace.
+// eslint-disable-next-line no-unused-vars
+app.use((err, _req, res, _next) => {
+  const status = err.statusCode ?? err.status ?? 500;
+  const message = process.env.NODE_ENV === 'production' ? 'Erro interno' : err.message;
+  res.status(status).json({ error: message });
 });
 
 if (require.main === module) {
